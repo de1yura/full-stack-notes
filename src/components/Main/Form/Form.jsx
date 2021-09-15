@@ -39,7 +39,9 @@ export default function AnimeList() {
   const[animes, setAnimes]=useState([]);
   const[popup, setPopup]=useState(false);
   const[editName, setEditName]=useState('');
-  const[editDescription, setEditDescription]= ('');
+  const[editDescription, setEditDescription]= useState('');
+  const[animeId, setAnimeId]=useState('');
+  //const newAnime = {name: editName, description: editDescription};
 
   const handleAdd=(e)=>{
     e.preventDefault();
@@ -64,18 +66,19 @@ export default function AnimeList() {
       setAnimes(newAnime);
   }
 
-  const handleName = (newName) => {
-    setEditName(newName);
+  const handleEdit =(e)=> {
+    console.log(animeId)
+    e.preventDefault()
+    togglePopup();
+    const newAnime = {name: editName, description: editDescription}
+    fetch(`http://localhost:8080/animeList/updateAnimeList/${animeId}`,{
+      method:"PUT",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(newAnime)
+    })
+    setEditDescription('')
+    setEditName('')
   }
-
-  // const handleEdit =(id)=> {
-  //   const animeList = {name, description}
-  //   fetch(`localhost:8080/animeList/updateAnimeList/${id}`,{
-  //     method:"PUT",
-  //     headers:{"Content-Type":"application/json"},
-  //     body:JSON.stringify(animeList)
-  //   })
-  // }
 
 
   useEffect(() => {
@@ -84,13 +87,17 @@ export default function AnimeList() {
     .then((result)=>{
       setAnimes(result);
     })
-  },[])
-
+  },[animes])
 
   // --- POPUP----// 
 
   const togglePopup =()=> {
     setPopup(!popup);
+  }
+
+  const combinedFunction = (id) => {
+    setAnimeId(id)
+    togglePopup();
   }
 
 
@@ -104,7 +111,7 @@ export default function AnimeList() {
           <DeleteIcon />
         </IconButton>
 
-        <IconButton onClick={(e)=>handleName(anime.name) ,togglePopup}  aria-label="edit" className={classes.margin}>
+        <IconButton onClick={() => combinedFunction(anime.id)}  aria-label="edit" className={classes.margin}>
           <EditIcon />
         </IconButton>
     </Paper>
@@ -139,24 +146,24 @@ export default function AnimeList() {
     </Paper>
 
 {popup && (
-  <div  className={styles.modal}>
+  <form onSubmit={(e)=>handleEdit(e)} className={styles.modal}>
     <div className={styles.popup}>
       <div className={styles.popupContent}>
         <Paper style={paperStyle}>
           <h2>Edit</h2>
           <TextField id="outlined-basic" label="Anime name" variant="outlined" fullWidth
-            value={editName}
+            value={editName} onChange={(e) => setEditName(e.target.value)}
             />
             <TextField id="outlined-basic" label="Anime description" variant="outlined" fullWidth
-            value={editDescription}
+            value={editDescription} onChange={(e) => setEditDescription(e.target.value)}
             />
-            <IconButton onClick={togglePopup}  aria-label="edit" className={classes.margin}>
+            <IconButton type="submit" aria-label="edit" className={classes.margin}>
               <EditIcon />
             </IconButton>
         </Paper>
       </div>
     </div>
-  </div> 
+   </form> 
 )}
    
 

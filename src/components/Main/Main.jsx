@@ -5,8 +5,10 @@ import Form from './Form/Form'
 const Main = () => {
   return (
     <div>
+
       <Navbar/>
       <Form />
+
     </div>
   )
 }
