@@ -23,6 +23,7 @@ const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+    marginBottom: 100,
   },
   appBar: {
     transition: theme.transitions.create(['margin', 'width'], {
